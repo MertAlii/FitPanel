@@ -1,3 +1,7 @@
+using FitPanel.Business.Managers;
+using FitPanel.Business.Services;
+using FitPanel.DataAccess.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace FitPanel.WebApi
@@ -8,6 +12,8 @@ namespace FitPanel.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
