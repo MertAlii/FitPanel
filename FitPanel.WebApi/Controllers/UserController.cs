@@ -1,5 +1,6 @@
 ﻿using FitPanel.Business.Services;
 using FitPanel.Entities.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace FitPanel.WebApi.Controllers
             _userService = userService;
         }
 
+        [Authorize(Roles = "Admin,Trainer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

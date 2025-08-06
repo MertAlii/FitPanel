@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using FitPanel.Business.Helpers;
 using FitPanel.Business.Services;
 using FitPanel.DataAccess.Repositories;
 using FitPanel.Entities.Concrete;
@@ -9,10 +10,12 @@ namespace FitPanel.Business.Managers
     public class AuthService : IAuthService
     {
         private readonly IRepository<User> _userRepository;
+        private readonly JwtTokenGenerator _tokenGenerator;
 
-        public AuthService(IRepository<User> userRepository)
+        public AuthService(IRepository<User> userRepository, JwtTokenGenerator tokenGenerator)
         {
             _userRepository = userRepository;
+            _tokenGenerator = tokenGenerator;
         }
 
         public async Task<UserDto?> LoginAsync(LoginDto loginDto)
@@ -24,14 +27,17 @@ namespace FitPanel.Business.Managers
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
             if (!isPasswordValid) return null;
 
+            var token = _tokenGenerator.GenerateToken(user);
+
             return new UserDto
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Gender = user.Gender,
-                Email = user.Email
+                Email = user.Email,
+                Token = token
             };
         }
     }
+
 }

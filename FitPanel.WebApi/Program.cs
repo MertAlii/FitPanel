@@ -1,9 +1,12 @@
+using FitPanel.Business.Helpers;
 using FitPanel.Business.Managers;
 using FitPanel.Business.Services;
 using FitPanel.DataAccess.Contexts;
 using FitPanel.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.Text;
 
 namespace FitPanel.WebApi
 {
@@ -12,6 +15,22 @@ namespace FitPanel.WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddSingleton<JwtTokenGenerator>();
+            builder.Services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                    };
+                });
 
 
             builder.Services.AddScoped<IAuthService, AuthService>();
@@ -30,7 +49,7 @@ namespace FitPanel.WebApi
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication(); 
             app.UseAuthorization();
 
             app.MapControllers();

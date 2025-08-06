@@ -18,11 +18,12 @@ namespace FitPanel.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var user = await _authService.LoginAsync(loginDto);
-            if (user == null)
+            var token = await _authService.LoginAsync(loginDto);
+            if (token == null)
                 return Unauthorized("Email veya şifre hatalı.");
 
-            return Ok(user);
+            return Ok(new { token });
         }
+
     }
 }
