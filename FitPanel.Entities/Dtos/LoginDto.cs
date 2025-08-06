@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace FitPanel.Entities.Dtos
 {
-    public class UserDto
+    public class LoginDto
     {
-        public int Id { get; set; }
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-        public string Gender { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
     }

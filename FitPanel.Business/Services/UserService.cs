@@ -44,17 +44,22 @@ namespace FitPanel.Business.Managers
 
         public async Task AddAsync(UserDto dto)
         {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
             var user = new User
             {
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Gender = dto.Gender,
-                Email = dto.Email
+                Email = dto.Email,
+                PasswordHash = passwordHash,
+                Role = "User" 
             };
 
             await _userRepository.AddAsync(user);
             await _userRepository.SaveAsync();
         }
+
 
         public async Task UpdateAsync(UserDto dto)
         {
